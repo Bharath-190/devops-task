@@ -7,7 +7,7 @@
 
 This project follows the assignment's requested sequence and reuses one small REST API for both components. It uses Python/FastAPI, which the assignment permits, rather than Maven/Gradle. The CI pipeline builds a Python wheel and runs tests.
 
-> **Important:** The source bundle is prepared, but the live GitHub repository, Jenkins server, Ansible target, and Kubernetes cluster still need to be created/configured and run in your environment. Do not put screenshots of commands that have not actually succeeded into the final report.
+> **Important:** The GitHub repository, Jenkins CI pipeline, Ansible deployment, Docker image, and local Kubernetes deployment have been implemented and tested. Do not put screenshots of commands that have not actually succeeded into the final report.
 
 ## Assignment pipeline
 
@@ -123,7 +123,7 @@ If your Jenkins controller/agent runs only on Windows, configure a Linux agent o
 
 ### Step 5: CI enhancement implemented
 
-**Enhancement:** automated unit tests run before the wheel build. Jenkins runs four regression tests using pytest and publishes JUnit-format results. The wheel is also archived under `artifacts/task-api-<BUILD_NUMBER>-<SHORT_SHA>.whl`, tying the output to the source commit. `.github/workflows/ci.yml` provides a second CI implementation on pushes and pull requests.
+**Enhancement:** automated unit tests run before the wheel build. Jenkins runs five regression tests using pytest and publishes JUnit-format results. The wheel is also archived under `artifacts/task-api-<BUILD_NUMBER>-<SHORT_SHA>.whl`, tying the output to the source commit. `.github/workflows/ci.yml` provides a second CI implementation on pushes and pull requests.
 
 **Evidence to capture (from the assignment):**
 - Git branch/commit history including the merge.
@@ -138,7 +138,7 @@ Use the same repository and API.
 
 ### Step 1: Write and run the Ansible playbook
 
-The playbook is at `ansible/playbook.yml`; the role is at `ansible/roles/task_api`. It installs Python runtime packages, creates a service account and application directory, copies source and requirements, creates a virtual environment, installs dependencies, installs a systemd service, and enables/starts it. The `app_port` variable is configurable. The `Restart task-api` handler restarts the service when source, dependencies, or unit configuration changes.
+The playbook is at `ansible/playbook.yml`; the role is at `ansible/roles/task_api`. It installs Python runtime packages, creates a service account and application directory, copies the built Python wheel to the target host, creates a virtual environment, installs the wheel and its declared dependencies, installs a systemd service, and enables/starts it. The `app_port` variable is configurable. The `Restart task-api` handler restarts the service when source, dependencies, or unit configuration changes.
 
 Run Ansible from Linux/WSL or another Linux control machine with Ansible installed. By default, `ansible/inventory.ini` targets `localhost`; use this only on a Linux host with systemd and become/sudo permissions. To target an Ubuntu VM, edit the inventory as described in the comments and make sure SSH and privilege escalation work.
 
