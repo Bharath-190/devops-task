@@ -1,0 +1,8 @@
+---
+app_name: task-api
+app_install_dir: /opt/task-api
+app_port: 8000
+app_user: taskapi
+app_group: taskapi
+app_source_dir: "{{ role_path }}/../../../app"
+app_requirements_file: "{{ role_path }}/../../../requirements.txt"

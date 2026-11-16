@@ -1,0 +1,89 @@
+---
+- name: Choose runtime packages for Debian-family systems
+  ansible.builtin.set_fact:
+    task_api_packages:
+      - python3
+      - python3-venv
+      - python3-pip
+  when: ansible_os_family == 'Debian'
+
+- name: Choose runtime packages for Arch Linux
+  ansible.builtin.set_fact:
+    task_api_packages:
+      - python
+      - python-pip
+  when: ansible_distribution == 'Archlinux'
+
+- name: Install Python runtime packages
+  ansible.builtin.package:
+    name: "{{ task_api_packages | default(['python3', 'python3-venv', 'python3-pip']) }}"
+    state: present
+
+- name: Create service group
+  ansible.builtin.group:
+    name: "{{ app_group }}"
+    system: true
+    state: present
+
+- name: Create service user
+  ansible.builtin.user:
+    name: "{{ app_user }}"
+    group: "{{ app_group }}"
+    system: true
+    create_home: false
+    shell: /usr/sbin/nologin
+    state: present
+
+- name: Create application directory
+  ansible.builtin.file:
+    path: "{{ app_install_dir }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: '0755'
+
+- name: Copy application source
+  ansible.builtin.copy:
+    src: "{{ app_source_dir }}/"
+    dest: "{{ app_install_dir }}/app/"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: preserve
+  notify: Restart task-api
+
+- name: Copy runtime requirements
+  ansible.builtin.copy:
+    src: "{{ app_requirements_file }}"
+    dest: "{{ app_install_dir }}/requirements.txt"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: '0644'
+  notify: Restart task-api
+
+- name: Create Python virtual environment
+  ansible.builtin.command:
+    cmd: "python3 -m venv {{ app_install_dir }}/venv"
+    creates: "{{ app_install_dir }}/venv/bin/python"
+
+- name: Install application requirements
+  ansible.builtin.pip:
+    requirements: "{{ app_install_dir }}/requirements.txt"
+    virtualenv: "{{ app_install_dir }}/venv"
+    virtualenv_command: "python3 -m venv"
+  notify: Restart task-api
+
+- name: Install systemd unit
+  ansible.builtin.template:
+    src: task-api.service.j2
+    dest: /etc/systemd/system/task-api.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart task-api
+
+- name: Enable and start Task API service
+  ansible.builtin.systemd:
+    name: task-api
+    enabled: true
+    state: started
+    daemon_reload: true
