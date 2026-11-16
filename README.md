@@ -1,9 +1,9 @@
 # Task Management API — DevOps Assignment
 
 **Course:** 25CIAEC59 / 25CYAEC59 · **Total:** 20 marks (Component 1: 10, Component 2: 10)  
-**GitHub account:** `1ms24ci031-oss`  
-**Suggested repository name:** `devops-task-api`  
-**Repository URL:** `https://github.com/1ms24ci031-oss/devops-task-api`
+**GitHub account:** `Bharath-190`  
+**Suggested repository name:** `devops-task`  
+**Repository URL:** `https://github.com/Bharath-190/devops-task`
 
 This project follows the assignment's requested sequence and reuses one small REST API for both components. It uses Python/FastAPI, which the assignment permits, rather than Maven/Gradle. The CI pipeline builds a Python wheel and runs tests.
 
@@ -70,7 +70,7 @@ Open interactive API documentation at `http://127.0.0.1:8000/docs`. Stop the ser
 
 ### Step 2: Set up Git and GitHub
 
-Create a **new empty repository** named `devops-task-api` under `1ms24ci031-oss` (do not initialize it with a README, license, or `.gitignore`, because these files already exist in this bundle). Then, from this folder:
+Create a **new empty repository** named `devops-task` under `Bharath-190` (do not initialize it with a README, license, or `.gitignore`, because these files already exist in this bundle). Then, from this folder:
 
 ```bash
 git init -b main
@@ -78,7 +78,7 @@ git config user.name "YOUR NAME"
 git config user.email "YOUR_GITHUB_NOREPLY_OR_EMAIL"
 git add .
 git commit -m "Initial Task API and DevOps pipeline"
-git remote add origin https://github.com/1ms24ci031-oss/devops-task-api.git
+git remote add origin https://github.com/Bharath-190/devops-task.git
 git push -u origin main
 
 git switch -c feature/health-and-tests
@@ -113,7 +113,7 @@ A `.whl` file should be created in `dist/`. It is the build artifact archived by
 
 1. Ensure Jenkins can run `git`, `python3`, and `pip` on the executor/agent. The `sh` steps assume a Linux/WSL agent.
 2. In Jenkins, choose **New Item → Pipeline** and name it `task-api-ci`.
-3. Under **Pipeline**, choose **Pipeline script from SCM**, SCM **Git**, and enter `https://github.com/1ms24ci031-oss/devops-task-api.git`; choose branch `*/main`; script path `Jenkinsfile`.
+3. Under **Pipeline**, choose **Pipeline script from SCM**, SCM **Git**, and enter `https://github.com/Bharath-190/devops-task.git`; choose branch `*/main`; script path `Jenkinsfile`.
 4. Configure credentials if the repository is private. Do not store credentials or tokens in source files.
 5. Save and run the first build once. The Jenkinsfile polls SCM every two minutes (`pollSCM('H/2 * * * *')`) so pushes are picked up automatically without requiring a public webhook endpoint.
 6. Push a small source change and verify a new build is triggered automatically. The first manual run alone does not prove automatic CI.
