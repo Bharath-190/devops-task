@@ -43,3 +43,13 @@ def test_unknown_task_returns_404(client):
 def test_task_title_must_not_be_blank(client):
     response = client.post("/todos", json={"title": "   "})
     assert response.status_code == 422
+
+
+def test_root_returns_service_information(client):
+    response = client.get("/")
+    assert response.status_code == 200
+    assert response.json() == {
+        "service": "task-api",
+        "message": "Task Management API is running",
+        "docs": "/docs",
+    }
